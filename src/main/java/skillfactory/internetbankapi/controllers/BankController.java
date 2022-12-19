@@ -2,7 +2,8 @@ package skillfactory.internetbankapi.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 public class BankController {
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LoggerFactory.getLogger(BankController.class);
 
     private final UserRepository userRepository;
 
@@ -53,7 +54,6 @@ public class BankController {
 
     @PutMapping(value = "balance/{id}")
     @Operation(summary = "Запрос на пополнение баланса пользователя по его ID", description = "Позволяет пополнить баланс пользователя по его ID из БД")
-
     public ResponseEntity<Double> putMoney (@PathVariable(name = "id") Long id, @RequestParam("sum") Double sum) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
@@ -65,6 +65,5 @@ public class BankController {
         }
         logger.info("Пользователь с ID:" + id + " не найден");
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
     }
 }

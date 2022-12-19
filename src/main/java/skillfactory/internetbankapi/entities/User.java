@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Table(name = "USERS")
 @Data
@@ -25,9 +27,7 @@ public class User {
 
     private Double balance;
 
-    public User(String name, String surname, Double balance) {
-        this.name = name;
-        this.surname = surname;
-        this.balance = balance;
-    }
+    @OneToMany
+    private List<Operation> operations;
+
 }

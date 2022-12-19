@@ -27,7 +27,7 @@ public class User {
 
     private Double balance;
 
-    @OneToMany
-    private List<Operation> operations;
+    @OneToMany (cascade=CascadeType.ALL)
+    private List<Operations> operations;
 
 }

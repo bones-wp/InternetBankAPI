@@ -13,22 +13,19 @@ import java.time.format.DateTimeFormatter;
 @Table(name = "OPERATIONS")
 @Data
 @AllArgsConstructor
-@NoArgsConstructor(access = AccessLevel.PRIVATE, force = true)
-public class Operation {
-    @Transient
-    private final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy");
+public class Operations {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate dateOfOperation;
-    private Enum<EnumOperations> operationType;
+
+    @Enumerated(EnumType.STRING)
+    private EnumOperations operationType;
+
     private Double sum;
 
-    public Operation(Enum<EnumOperations> operationType, Double sum) {
-        this.dateOfOperation = LocalDate.parse(LocalDate.now().format(dateFormatter));
-        this.operationType = operationType;
-        this.sum = sum;
+    public Operations() {
     }
 }

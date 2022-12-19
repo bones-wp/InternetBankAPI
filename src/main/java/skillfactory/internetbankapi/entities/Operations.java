@@ -12,7 +12,6 @@ import java.time.format.DateTimeFormatter;
 @Entity
 @Table(name = "OPERATIONS")
 @Data
-@AllArgsConstructor
 public class Operations {
 
     @Id
@@ -27,5 +26,11 @@ public class Operations {
     private Double sum;
 
     public Operations() {
+    }
+
+    public Operations(LocalDate dateOfOperation, EnumOperations operationType, Double sum) {
+        this.dateOfOperation = dateOfOperation;
+        this.operationType = operationType;
+        this.sum = sum;
     }
 }

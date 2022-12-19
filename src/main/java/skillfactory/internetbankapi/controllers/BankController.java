@@ -15,7 +15,11 @@ import skillfactory.internetbankapi.repositories.UserRepository;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 public class BankController {
@@ -50,16 +54,13 @@ public class BankController {
             User user = optionalUser.get();
             if (sum > 0.0) {
                 user.setBalance(user.getBalance() - sum);
-                userRepository.save(user);
-                logger.info("Снятие со счёта пользователя " + user.getName() + " " + sum + " $ прошло успешно!");
 
                 LocalDate date = LocalDate.now();
 
-                Operations operations = new Operations();
-                operations.setDateOfOperation(date);
-                operations.setSum(sum);
-                operations.setOperationType(EnumOperations.TAKE_MONEY);
-                operationRepository.save(operations);
+                user.setOperations(new ArrayList<>(List.of(new Operations(date, EnumOperations.TAKE_MONEY, sum))));
+
+                userRepository.save(user);
+                logger.info("Снятие со счёта пользователя " + user.getName() + " " + sum + " $ прошло успешно!");
 
                 return new ResponseEntity<>(HttpStatus.OK);
             }
@@ -77,18 +78,18 @@ public class BankController {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
+            List<Operations> operationsList = user.getOperations();
             if (sum > 0.0) {
                 user.setBalance(user.getBalance() + sum);
-                userRepository.save(user);
-                logger.info("Пополнение счёта пользователя " + user.getName() + " на " + sum + " $ прошло успешно!");
 
                 LocalDate date = LocalDate.now();
 
-                Operations operations = new Operations();
-                operations.setDateOfOperation(date);
-                operations.setSum(sum);
-                operations.setOperationType(EnumOperations.PUT_MONEY);
-                operationRepository.save(operations);
+                operationsList.add(new Operations(date, EnumOperations.PUT_MONEY, sum));
+                //((List.of(new Operations(date, EnumOperations.PUT_MONEY, sum))))
+                user.setOperations(operationsList);
+
+                userRepository.save(user);
+                logger.info("Пополнение счёта пользователя " + user.getName() + " на " + sum + " $ прошло успешно!");
 
                 return new ResponseEntity<>(HttpStatus.OK);
             }

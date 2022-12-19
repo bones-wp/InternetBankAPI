@@ -1,21 +1,28 @@
 package skillfactory.internetbankapi.controllers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import skillfactory.internetbankapi.entities.EnumOperations;
 import skillfactory.internetbankapi.entities.Operations;
 import skillfactory.internetbankapi.entities.User;
 import skillfactory.internetbankapi.repositories.OperationRepository;
 import skillfactory.internetbankapi.repositories.UserRepository;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 public class OperationController {
+    private static final Logger logger = LoggerFactory.getLogger(OperationController.class);
+
 
     private final UserRepository userRepository;
     private final OperationRepository operationRepository;
@@ -27,21 +34,32 @@ public class OperationController {
     }
 
 
-    /*@GetMapping(value = "operation/{id}")
-    public List<Operations> getOperationList(@PathVariable(name = "id") Long id,
-                                             @RequestParam(value = "start", required = false) LocalDate start,
-                                             @RequestParam(value = "end", required = false) LocalDate end) {
+    @GetMapping(value = "operation/{id}")
+    public ResponseEntity<List<Operations>> getOperationList(@PathVariable(name = "id") Long id,
+                                                                 @RequestParam(value = "start", required = false) LocalDate start,
+                                                                 @RequestParam(value = "end", required = false) LocalDate end) {
 
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-
-            {
-
-                if (start != null && end != null) {
-                    start.datesUntil(end).forEach(this::);
+            if (start != null && end != null) {
+                List<Operations> operationsList = optionalUser.get().getOperations();
+                List<Operations> operationsListFilter = new ArrayList<>();
+                for (Operations o : operationsList) {
+                    if (o.getDateOfOperation().isAfter(start) && o.getDateOfOperation().isBefore(end)){
+                        operationsListFilter.add(o);
+                    }
                 }
 
-
-            }*/
+                logger.info("Операции пользователя с " + start + " по " + end);
+                return new ResponseEntity<>(operationsListFilter, HttpStatus.OK);
+            }
+            else {
+                List<Operations> operationsList = optionalUser.get().getOperations();
+                logger.info("Операции пользователя за всё время" );
+                return new ResponseEntity<>(operationsList, HttpStatus.OK);
+            }
+        }
+        logger.info("Пользователь с ID:" + id + " не найден");
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
 }

@@ -28,6 +28,7 @@ public class User {
     private Double balance;
 
     @OneToMany (cascade=CascadeType.ALL)
+    @JoinColumn (name = "userId")
     private List<Operations> operations;
 
 }

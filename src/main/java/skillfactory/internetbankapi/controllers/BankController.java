@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import skillfactory.internetbankapi.entities.EnumOperations;
 import skillfactory.internetbankapi.entities.Operations;
@@ -34,6 +35,7 @@ public class BankController {
         this.operationRepository = operationRepository;
     }
 
+    @Transactional
     @GetMapping(value = "balance/{id}")
     @Operation(summary = "Запрос баланса пользователя по его ID", description = "Позволяет запросить баланс пользователя по его ID из БД")
     public ResponseEntity<Double> getBalance(@PathVariable(name = "id") Long id) {
@@ -46,18 +48,22 @@ public class BankController {
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
+    @Transactional
     @PostMapping(value = "balance/{id}")
     @Operation(summary = "Запрос снятия денег с баланса пользователя по его ID", description = "Позволяет снять деньги с баланса пользователя по его ID из БД")
     public ResponseEntity<Double> takeMoney(@PathVariable(name = "id") Long id, @RequestParam("sum") Double sum) {
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
+            List<Operations> operationsList = user.getOperations();
             if (sum > 0.0) {
                 user.setBalance(user.getBalance() - sum);
 
                 LocalDate date = LocalDate.now();
 
-                user.setOperations(new ArrayList<>(List.of(new Operations(date, EnumOperations.TAKE_MONEY, sum))));
+                operationsList.add(new Operations(date, EnumOperations.TAKE_MONEY, sum));
+
+                user.setOperations(operationsList);
 
                 userRepository.save(user);
                 logger.info("Снятие со счёта пользователя " + user.getName() + " " + sum + " $ прошло успешно!");
@@ -72,6 +78,7 @@ public class BankController {
 
     }
 
+    @Transactional
     @PutMapping(value = "balance/{id}")
     @Operation(summary = "Запрос на пополнение баланса пользователя по его ID", description = "Позволяет пополнить баланс пользователя по его ID из БД")
     public ResponseEntity<Double> putMoney(@PathVariable(name = "id") Long id, @RequestParam("sum") Double sum) {
@@ -85,7 +92,7 @@ public class BankController {
                 LocalDate date = LocalDate.now();
 
                 operationsList.add(new Operations(date, EnumOperations.PUT_MONEY, sum));
-                //((List.of(new Operations(date, EnumOperations.PUT_MONEY, sum))))
+
                 user.setOperations(operationsList);
 
                 userRepository.save(user);

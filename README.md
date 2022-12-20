@@ -4,10 +4,10 @@
 ![GitHub repo file count](https://img.shields.io/github/directory-file-count/j-thrash/InternetBankAPI)
 ![GitHub last commit](https://img.shields.io/github/last-commit/j-thrash/InternetBankAPI)
 
-# Функциональсть согласно задания:
-## Узнать баланс по ID пользователя;
-## Снятие заданной суммы с баланса пользователя;
-## Пополнение баланса на заданную сумму;
-## Запрос операций пользователя по его ID
+## Функциональсть согласно задания:
+### Узнать баланс по ID пользователя;
+### Снятие заданной суммы с баланса пользователя;
+### Пополнение баланса на заданную сумму;
+### Запрос операций пользователя по его ID
 
 ![222.png](src%2Fmain%2Fresources%2Fstatic%2F222.png)

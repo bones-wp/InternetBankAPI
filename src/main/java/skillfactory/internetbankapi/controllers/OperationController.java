@@ -36,25 +36,27 @@ public class OperationController {
 
     @GetMapping(value = "operation/{id}")
     public ResponseEntity<List<Operations>> getOperationList(@PathVariable(name = "id") Long id,
-                                                                 @RequestParam(value = "start", required = false) LocalDate start,
-                                                                 @RequestParam(value = "end", required = false) LocalDate end) {
+                                                                 @RequestParam(value = "start", required = false) String start,
+                                                                 @RequestParam(value = "end", required = false) String end) {
 
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
+            List<Operations> operationsList = optionalUser.get().getOperations();
+
             if (start != null && end != null) {
-                List<Operations> operationsList = optionalUser.get().getOperations();
+                LocalDate startDate = LocalDate.parse(start);
+                LocalDate endDate = LocalDate.parse(end);
+
                 List<Operations> operationsListFilter = new ArrayList<>();
                 for (Operations o : operationsList) {
-                    if (o.getDateOfOperation().isAfter(start) && o.getDateOfOperation().isBefore(end)){
+                    if (o.getDateOfOperation().isAfter(startDate) && o.getDateOfOperation().isBefore(endDate)){
                         operationsListFilter.add(o);
                     }
                 }
-
                 logger.info("Операции пользователя с " + start + " по " + end);
                 return new ResponseEntity<>(operationsListFilter, HttpStatus.OK);
             }
             else {
-                List<Operations> operationsList = optionalUser.get().getOperations();
                 logger.info("Операции пользователя за всё время" );
                 return new ResponseEntity<>(operationsList, HttpStatus.OK);
             }

@@ -2,6 +2,7 @@ package skillfactory.internetbankapi.entities;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,8 +28,8 @@ public class User {
 
     private Double balance;
 
-    @OneToMany (cascade=CascadeType.ALL)
-    @JoinColumn (name = "userId")
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "userId")
     private List<Operations> operations;
 
 }

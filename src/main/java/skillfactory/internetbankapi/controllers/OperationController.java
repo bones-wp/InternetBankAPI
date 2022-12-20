@@ -37,8 +37,8 @@ public class OperationController {
     @Transactional
     @GetMapping(value = "operation/{id}")
     public ResponseEntity<List<Operations>> getOperationList(@PathVariable(name = "id") Long id,
-                                                                 @RequestParam(value = "start", required = false) String start,
-                                                                 @RequestParam(value = "end", required = false) String end) {
+                                                             @RequestParam(value = "start", required = false) String start,
+                                                             @RequestParam(value = "end", required = false) String end) {
 
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isPresent()) {
@@ -50,15 +50,14 @@ public class OperationController {
 
                 List<Operations> operationsListFilter = new ArrayList<>();
                 for (Operations o : operationsList) {
-                    if (o.getDateOfOperation().isAfter(startDate) && o.getDateOfOperation().isBefore(endDate)){
+                    if (o.getDateOfOperation().isAfter(startDate) && o.getDateOfOperation().isBefore(endDate)) {
                         operationsListFilter.add(o);
                     }
                 }
                 logger.info("Операции пользователя с " + start + " по " + end);
                 return new ResponseEntity<>(operationsListFilter, HttpStatus.OK);
-            }
-            else {
-                logger.info("Операции пользователя за всё время" );
+            } else {
+                logger.info("Операции пользователя за всё время");
                 return new ResponseEntity<>(operationsList, HttpStatus.OK);
             }
         }

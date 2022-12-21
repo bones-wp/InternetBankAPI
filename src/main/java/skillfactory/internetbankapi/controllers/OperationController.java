@@ -10,10 +10,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import skillfactory.internetbankapi.entities.EnumOperations;
 import skillfactory.internetbankapi.entities.Operations;
 import skillfactory.internetbankapi.entities.User;
-import skillfactory.internetbankapi.repositories.OperationRepository;
 import skillfactory.internetbankapi.repositories.UserRepository;
 
 import java.time.LocalDate;
@@ -26,16 +24,14 @@ public class OperationController {
 
 
     private final UserRepository userRepository;
-    private final OperationRepository operationRepository;
 
     @Autowired
-    public OperationController(UserRepository userRepository, OperationRepository operationRepository) {
+    public OperationController(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.operationRepository = operationRepository;
     }
 
     @Transactional
-    @GetMapping(value = "operation/{id}")
+    @GetMapping(value = "/operation/{id}")
     public ResponseEntity<List<Operations>> getOperationList(@PathVariable(name = "id") Long id,
                                                              @RequestParam(value = "start", required = false) String start,
                                                              @RequestParam(value = "end", required = false) String end) {

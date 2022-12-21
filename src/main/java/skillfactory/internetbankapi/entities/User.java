@@ -32,4 +32,10 @@ public class User {
     @JoinColumn(name = "userId")
     private List<Operations> operations;
 
+    public User(Long id, String name, String surname, Double balance) {
+        this.id = id;
+        this.name = name;
+        this.surname = surname;
+        this.balance = balance;
+    }
 }
